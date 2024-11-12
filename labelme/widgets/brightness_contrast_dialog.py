@@ -22,7 +22,7 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             layout.addWidget(title_label)
             #
             slider = QtWidgets.QSlider(Qt.Horizontal)
-            slider.setRange(0, 3 * self._base_value)
+            slider.setRange(0, 2 * self._base_value)
             slider.setValue(self._base_value)
             layout.addWidget(slider)
             #
@@ -41,9 +41,16 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self.slider_contrast = sliders["Contrast:"]
         del sliders
 
+        button = QtWidgets.QPushButton("Reset")
+        button.clicked.connect(self.onReset)
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(button)
+        layouts["button"] = layout
+
         layout = QtWidgets.QVBoxLayout()
         layout.addLayout(layouts["Brightness:"])
         layout.addLayout(layouts["Contrast:"])
+        layout.addLayout(layouts["button"])
         del layouts
         self.setLayout(layout)
 
@@ -63,5 +70,14 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
 
         qimage = QImage(
             img.tobytes(), img.width, img.height, img.width * 3, QImage.Format_RGB888
+        )
+        self.callback(qimage)
+
+
+    def onReset(self, _):
+        self.slider_brightness.setValue(self._base_value) 
+        self.slider_contrast.setValue(self._base_value) 
+        qimage = QImage(
+            self.img.tobytes(), self.img.width, self.img.height, self.img.width * 3, QImage.Format_RGB888
         )
         self.callback(qimage)

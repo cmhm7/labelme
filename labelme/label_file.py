@@ -6,6 +6,7 @@ import os.path as osp
 
 import PIL.Image
 
+import numpy as np
 from labelme import PY2
 from labelme import QT4
 from labelme import __version__
@@ -46,6 +47,9 @@ class LabelFile(object):
     def load_image_file(filename):
         try:
             image_pil = PIL.Image.open(filename)
+            if np.array(image_pil).shape[2]==4:
+                print("RGBA image! converting to RGB")
+                image_pil = PIL.Image.fromarray(np.array(image_pil)[:,:,0:3])
         except IOError:
             logger.error("Failed opening image file: {}".format(filename))
             return
